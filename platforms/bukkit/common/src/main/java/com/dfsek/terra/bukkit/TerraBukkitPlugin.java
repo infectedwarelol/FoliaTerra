@@ -19,6 +19,8 @@ package com.dfsek.terra.bukkit;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,6 +48,12 @@ import com.dfsek.terra.bukkit.world.BukkitAdapter;
 
 
 public class TerraBukkitPlugin extends JavaPlugin {
+    private static final String SEISMIC_REFLECTION_LOGGER = "com.dfsek.seismic.util.ReflectionUtils";
+
+    static {
+        Configurator.setLevel(SEISMIC_REFLECTION_LOGGER, Level.OFF);
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(TerraBukkitPlugin.class);
     private final Map<String, com.dfsek.terra.api.world.chunk.generation.ChunkGenerator> generatorMap = new HashMap<>();
     private PlatformImpl platform;
