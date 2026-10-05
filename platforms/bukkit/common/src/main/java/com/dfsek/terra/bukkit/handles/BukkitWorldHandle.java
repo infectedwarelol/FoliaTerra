@@ -58,7 +58,7 @@ public class BukkitWorldHandle implements WorldHandle {
         }
         String blockData = remapLegacyId(stripped);
         try {
-            org.bukkit.block.data.BlockData bukkitData = Bukkit.createBlockData(blockData); // somehow bukkit managed to make this not thread safe! :)
+            org.bukkit.block.data.BlockData bukkitData = Bukkit.createBlockData(blockData);
             return BukkitBlockState.newInstance(bukkitData, nbt);
         } catch (Exception ignored) {
             try {
