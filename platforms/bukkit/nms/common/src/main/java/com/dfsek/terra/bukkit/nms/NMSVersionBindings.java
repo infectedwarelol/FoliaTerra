@@ -8,6 +8,7 @@ import net.minecraft.world.level.biome.Biome.BiomeBuilder;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
+import com.dfsek.terra.api.config.ConfigPack;
 import com.dfsek.terra.api.world.biome.generation.BiomeProvider;
 import com.dfsek.terra.api.world.chunk.generation.ChunkGenerator;
 import com.dfsek.terra.api.world.info.WorldProperties;
@@ -30,4 +31,9 @@ public interface NMSVersionBindings {
 
     void applyStructureBeard(ChunkGenerator generator, StructureManager structures, ChunkAccess chunk, WorldProperties world,
                              BiomeProvider biomeProvider, PreLoadCompatibilityOptions options);
+
+    net.minecraft.world.level.biome.BiomeSource createBiomeSource(BiomeProvider biomeProvider, long seed);
+
+    net.minecraft.world.level.chunk.ChunkGenerator createChunkGenerator(net.minecraft.world.level.chunk.ChunkGenerator vanilla, ConfigPack pack,
+                                                                        net.minecraft.world.level.biome.BiomeSource biomeSource, long seed);
 }

@@ -20,8 +20,8 @@ public final class NMSStructureBeardifier {
                              StructureDensitySampler sampler) {
         double threshold = compatibilityOptions.getBeardThreshold();
         double airThreshold = compatibilityOptions.getAirThreshold();
-        int chunkX = chunk.getPos().x() << 4;
-        int chunkZ = chunk.getPos().z() << 4;
+        int chunkX = chunk.getPos().getMinBlockX();
+        int chunkZ = chunk.getPos().getMinBlockZ();
 
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {

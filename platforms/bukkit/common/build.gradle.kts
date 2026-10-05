@@ -2,7 +2,7 @@ repositories {
 
 }
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 25
+    options.release = 21
 }
 
 dependencies {

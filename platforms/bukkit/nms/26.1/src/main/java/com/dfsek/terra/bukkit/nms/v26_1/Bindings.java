@@ -6,12 +6,16 @@ import net.minecraft.world.level.levelgen.Beardifier;
 import net.minecraft.world.level.levelgen.DensityFunction.SinglePointContext;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.attribute.modifier.AttributeModifier;
 
+import com.dfsek.terra.api.config.ConfigPack;
+import com.dfsek.terra.bukkit.nms.NMSBiomeProvider;
+import com.dfsek.terra.bukkit.nms.NMSChunkGeneratorDelegate;
 import com.dfsek.terra.api.world.biome.generation.BiomeProvider;
 import com.dfsek.terra.api.world.chunk.generation.ChunkGenerator;
 import com.dfsek.terra.api.world.info.WorldProperties;
@@ -68,5 +72,16 @@ public final class Bindings implements NMSVersionBindings {
         Beardifier beardifier = Beardifier.forStructuresInChunk(structures, chunk.getPos());
         NMSStructureBeardifier.apply(generator, chunk, world, biomeProvider, options,
             (x, y, z) -> beardifier.compute(new SinglePointContext(x, y, z)));
+    }
+
+    @Override
+    public BiomeSource createBiomeSource(BiomeProvider biomeProvider, long seed) {
+        return new NMSBiomeProvider(biomeProvider, seed);
+    }
+
+    @Override
+    public net.minecraft.world.level.chunk.ChunkGenerator createChunkGenerator(net.minecraft.world.level.chunk.ChunkGenerator vanilla,
+                                                                               ConfigPack pack, BiomeSource biomeSource, long seed) {
+        return new NMSChunkGeneratorDelegate(vanilla, pack, biomeSource, seed, this);
     }
 }

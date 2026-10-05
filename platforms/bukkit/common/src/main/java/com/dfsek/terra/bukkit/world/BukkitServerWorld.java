@@ -31,6 +31,8 @@ import com.dfsek.terra.api.world.chunk.generation.ChunkGenerator;
 import com.dfsek.terra.bukkit.BukkitEntity;
 import com.dfsek.terra.bukkit.generator.BukkitChunkGeneratorWrapper;
 import com.dfsek.terra.bukkit.util.BukkitUtils;
+import com.dfsek.terra.bukkit.world.block.BlockEntityNBT;
+import com.dfsek.terra.bukkit.world.block.data.BukkitBlockState;
 import com.dfsek.terra.bukkit.world.block.state.BukkitBlockEntity;
 
 
@@ -49,6 +51,9 @@ public class BukkitServerWorld implements ServerWorld {
     @Override
     public void setBlockState(int x, int y, int z, BlockState data, boolean physics) {
         delegate.getBlockAt(x, y, z).setBlockData(BukkitAdapter.adapt(data), physics);
+        if(data instanceof BukkitBlockState state && state.hasNBT()) {
+            BlockEntityNBT.applyToWorld(delegate, x, y, z, state.getNBT());
+        }
     }
 
     @Override

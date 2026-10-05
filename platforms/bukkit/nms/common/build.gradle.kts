@@ -3,7 +3,7 @@ plugins {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 25
+    options.release = 21
 }
 
 dependencies {
@@ -14,4 +14,8 @@ dependencies {
 
 tasks.withType<Jar>().configureEach {
     archiveBaseName.set("terra-bukkit-nms-common")
+}
+
+java {
+    disableAutoTargetJvm()
 }

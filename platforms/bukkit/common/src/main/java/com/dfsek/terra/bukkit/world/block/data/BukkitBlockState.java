@@ -25,13 +25,31 @@ import com.dfsek.terra.bukkit.world.BukkitAdapter;
 
 public class BukkitBlockState implements BlockState {
     private final org.bukkit.block.data.BlockData delegate;
+    private final String nbt;
 
     protected BukkitBlockState(org.bukkit.block.data.BlockData delegate) {
+        this(delegate, null);
+    }
+
+    protected BukkitBlockState(org.bukkit.block.data.BlockData delegate, String nbt) {
         this.delegate = delegate;
+        this.nbt = nbt;
     }
 
     public static BlockState newInstance(org.bukkit.block.data.BlockData bukkitData) {
         return new BukkitBlockState(bukkitData);
+    }
+
+    public static BlockState newInstance(org.bukkit.block.data.BlockData bukkitData, String nbt) {
+        return new BukkitBlockState(bukkitData, nbt);
+    }
+
+    public boolean hasNBT() {
+        return nbt != null;
+    }
+
+    public String getNBT() {
+        return nbt;
     }
 
 

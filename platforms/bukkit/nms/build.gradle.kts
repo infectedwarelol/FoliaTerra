@@ -7,11 +7,12 @@ subprojects {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 25
+    options.release = 21
 }
 
 dependencies {
     api(project(path = ":platforms:bukkit:nms:common", configuration = "runtimeElements"))
+    api(project(path = ":platforms:bukkit:nms:1.21.11", configuration = "runtimeElements"))
     api(project(path = ":platforms:bukkit:nms:26.1", configuration = "runtimeElements"))
     api(project(path = ":platforms:bukkit:nms:26.3", configuration = "runtimeElements"))
 }

@@ -9,13 +9,14 @@ dependencies {
 
     shaded(project(":platforms:bukkit:common"))
     shaded(project(path = ":platforms:bukkit:nms:common", configuration = "runtimeElements"))
+    shaded(project(path = ":platforms:bukkit:nms:1.21.11", configuration = "runtimeElements"))
     shaded(project(path = ":platforms:bukkit:nms:26.1", configuration = "runtimeElements"))
     shaded(project(path = ":platforms:bukkit:nms:26.3", configuration = "runtimeElements"))
     shaded("xyz.jpenilla", "reflection-remapper", Versions.Bukkit.reflectionRemapper)
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 25
+    options.release = 21
 }
 
 tasks {
@@ -46,3 +47,7 @@ tasks {
 
 
 addonDir(project.file("./run/plugins/Terra/addons"), tasks.named("runServer").get())
+
+java {
+    disableAutoTargetJvm()
+}

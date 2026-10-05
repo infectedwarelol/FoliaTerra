@@ -32,10 +32,15 @@ import com.dfsek.terra.bukkit.world.block.data.BukkitBlockState;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 
 public class BukkitWorldHandle implements WorldHandle {
     private static final Logger logger = LoggerFactory.getLogger(BukkitWorldHandle.class);
+    private static final Map<String, String> LEGACY_BLOCK_IDS = Map.of(
+        "minecraft:chain", "minecraft:iron_chain",
+        "chain", "iron_chain"
+    );
     private final BlockState air;
 
     public BukkitWorldHandle() {
@@ -44,19 +49,43 @@ public class BukkitWorldHandle implements WorldHandle {
 
     @Override
     public synchronized @NotNull BlockState createBlockState(@NotNull String data) {
+        String nbt = null;
+        String stripped = data;
+        int nbtStart = data.indexOf('{');
+        if(nbtStart != -1) {
+            nbt = data.substring(nbtStart);
+            stripped = data.substring(0, nbtStart);
+        }
+        String blockData = remapLegacyId(stripped);
         try {
-            org.bukkit.block.data.BlockData bukkitData = Bukkit.createBlockData(data); // somehow bukkit managed to make this not thread safe! :)
-            return BukkitBlockState.newInstance(bukkitData);
+            org.bukkit.block.data.BlockData bukkitData = Bukkit.createBlockData(blockData); // somehow bukkit managed to make this not thread safe! :)
+            return BukkitBlockState.newInstance(bukkitData, nbt);
         } catch (Exception ignored) {
             try {
                 Class<?> hacks = Class.forName("com.dfsek.terra.bukkit.nms.AwfulBukkitHacks");
                 Method method = hacks.getMethod("createBlockState", String.class);
-                Object result = method.invoke(null, data);
-                return BukkitBlockState.newInstance((BlockData) result);
+                Object result = method.invoke(null, blockData);
+                return BukkitBlockState.newInstance((BlockData) result, nbt);
             } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalArgumentException("Invalid block state data: " + data);
             }
         }
+    }
+
+    private static String remapLegacyId(String data) {
+        int idEnd = data.length();
+        for(int i = 0; i < data.length(); i++) {
+            char c = data.charAt(i);
+            if(c == '[' || c == '{') {
+                idEnd = i;
+                break;
+            }
+        }
+        String id = data.substring(0, idEnd).trim();
+        String remapped = LEGACY_BLOCK_IDS.get(id);
+        if(remapped == null) return data;
+        logger.debug("Remapped legacy block id {} to {}", id, remapped);
+        return remapped + data.substring(idEnd);
     }
 
     @Override

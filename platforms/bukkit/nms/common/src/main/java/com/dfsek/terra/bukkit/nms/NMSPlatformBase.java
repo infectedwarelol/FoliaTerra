@@ -27,6 +27,7 @@ import com.dfsek.terra.api.entity.EntityTypeExtended;
 import com.dfsek.terra.api.event.events.platform.PlatformInitializationEvent;
 import com.dfsek.terra.api.event.functional.FunctionalEventHandler;
 import com.dfsek.terra.api.world.biome.PlatformBiome;
+import com.dfsek.terra.bukkit.world.block.BlockEntityNBT;
 import com.dfsek.terra.bukkit.PlatformImpl;
 import com.dfsek.terra.bukkit.TerraBukkitPlugin;
 import com.dfsek.terra.bukkit.util.BukkitNMSAccess;
@@ -50,6 +51,7 @@ public class NMSPlatformBase extends PlatformImpl implements BukkitNMSAccess {
         super(plugin);
         this.bindings = bindings;
 
+        BlockEntityNBT.register(new NMSNBTApplicator());
         Bukkit.getPluginManager().registerEvents(new NMSInjectListener(bindings), plugin);
     }
 

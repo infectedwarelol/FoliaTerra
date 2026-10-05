@@ -9,6 +9,7 @@ import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -36,7 +37,7 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
 
     private final long seed;
 
-    public NMSChunkGeneratorDelegate(ChunkGenerator vanilla, ConfigPack pack, NMSBiomeProvider biomeProvider, long seed,
+    public NMSChunkGeneratorDelegate(ChunkGenerator vanilla, ConfigPack pack, BiomeSource biomeProvider, long seed,
                                      NMSVersionBindings bindings) {
         super(biomeProvider);
         this.delegate = pack.getGeneratorProvider().newInstance(pack);

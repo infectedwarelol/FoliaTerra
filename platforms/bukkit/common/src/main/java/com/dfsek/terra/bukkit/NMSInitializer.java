@@ -11,7 +11,7 @@ import com.dfsek.terra.bukkit.util.BukkitUtils;
 
 
 public interface NMSInitializer {
-    List<String> SUPPORTED_VERSIONS = List.of("v26.1.2", "v26.2", "v26.3");
+    List<String> SUPPORTED_VERSIONS = List.of("v1.21.11", "v26.1.2", "v26.2", "v26.3");
     String MINECRAFT_VERSION = VersionUtil.getMinecraftVersionInfo().toString();
     String TERRA_PACKAGE = NMSInitializer.class.getPackageName();
 
@@ -47,6 +47,7 @@ public interface NMSInitializer {
     private static PlatformImpl constructPlatform(TerraBukkitPlugin plugin) {
         try {
             String bindingsVersion = switch(MINECRAFT_VERSION) {
+                case "v1.21.11" -> "v1_21_11";
                 case "v26.3" -> "v26_3";
                 case "v26.1.2", "v26.2" -> "v26_1";
                 default -> "v26_1";
