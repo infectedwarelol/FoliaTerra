@@ -66,6 +66,12 @@ public class NMSBiomeInjector {
             effects.foliageColorOverride(vanillaBiomeProperties.getFoliageColor());
         }
 
+        if(vanillaBiomeProperties.getDryFoliageColor() == null) {
+            vanilla.getSpecialEffects().dryFoliageColorOverride().ifPresent(effects::dryFoliageColorOverride);
+        } else {
+            effects.dryFoliageColorOverride(vanillaBiomeProperties.getDryFoliageColor());
+        }
+
         if(vanillaBiomeProperties.getParticleConfig() != null) {
             builder.modifyAttribute(EnvironmentAttributes.AMBIENT_PARTICLES, AttributeModifier.override(),
                 List.of(vanillaBiomeProperties.getParticleConfig()));
