@@ -26,7 +26,7 @@ public class NMSWorldProperties implements WorldProperties {
 
     @Override
     public int getMaxHeight() {
-        return height.getMaxY();
+        return height.getMaxY() + 1;
     }
 
     @Override
