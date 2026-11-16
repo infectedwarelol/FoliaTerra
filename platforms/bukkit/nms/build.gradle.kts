@@ -6,6 +6,10 @@ subprojects {
     group = "com.dfsek.terra.bukkit.nms"
 }
 
+java {
+    disableAutoTargetJvm()
+}
+
 tasks.withType<JavaCompile>().configureEach {
     options.release = 21
 }
