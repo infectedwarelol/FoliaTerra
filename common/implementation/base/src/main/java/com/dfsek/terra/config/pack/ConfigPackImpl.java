@@ -151,6 +151,12 @@ public class ConfigPackImpl implements ConfigPack {
         ConfigPackAddonsTemplate addonsTemplate = new ConfigPackAddonsTemplate();
         selfLoader.load(addonsTemplate, packManifest);
         this.addons = addonsTemplate.getAddons();
+        addons.forEach((addon, range) -> {
+            if(!range.isSatisfiedBy(addon.getVersion())) {
+                logger.warn("Pack {} requires addon {} {}, but {} is installed. Generation may not match the pack.",
+                    path.getFileName(), addon.getID(), range.getFormatted(), addon.getVersion().getFormatted());
+            }
+        });
 
         ConfigPackExpressionOptionsTemplate expressionOptionsTemplate = new ConfigPackExpressionOptionsTemplate();
         selfLoader.load(expressionOptionsTemplate, packManifest);
