@@ -53,6 +53,7 @@ public class PlatformImpl extends AbstractPlatform {
 
     private int generationThreads;
 
+    @SuppressWarnings("this-escape")
     public PlatformImpl(TerraBukkitPlugin plugin) {
         generationThreads = getMoonriseGenerationThreadsWithReflection();
         if(generationThreads == 0) {

@@ -25,6 +25,7 @@ import com.dfsek.terra.bukkit.nms.config.VanillaBiomeProperties;
 
 public final class Bindings implements NMSVersionBindings {
     @Override
+    @SuppressWarnings("deprecation")
     public void addSpawn(MobSpawnSettings.Builder builder, MobCategory category, EntityType<?> type, int weight,
                          int minCount, int maxCount) {
         builder.addSpawn(type, category, weight, UniformInt.of(minCount, maxCount));
