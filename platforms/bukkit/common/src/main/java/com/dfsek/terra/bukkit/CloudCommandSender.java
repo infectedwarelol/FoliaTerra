@@ -1,7 +1,7 @@
 package com.dfsek.terra.bukkit;
 
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class CloudCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        delegate.getSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        delegate.getSender().sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
     }
 
     @Override
