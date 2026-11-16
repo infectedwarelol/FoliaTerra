@@ -53,17 +53,11 @@ fun Project.configureDistribution() {
             try {
                 file("${buildDir}/resources/main/packs/").deleteRecursively()
                 file("${buildDir}/resources/main/metapacks/").deleteRecursively()
-                val overworldPackUrl =
-                    URL("https://github.com/PolyhedralDev/TerraOverworldConfig/releases/download/" + Versions.Terra.overworldConfig + "/Overworld.zip")
-                val reimagENDPackUrl =
-                    URL("https://github.com/PolyhedralDev/ReimagEND/releases/download/" + Versions.Terra.reimagENDConfig + "/ReimagEND.zip")
-                val tartarusPackUrl =
-                    URL("https://github.com/PolyhedralDev/Tartarus/releases/download/" + Versions.Terra.tartarusConfig + "/Tartarus.zip")
                 val defaultPackUrl =
                     URL("https://github.com/PolyhedralDev/DefaultMetapack/releases/download/" + Versions.Terra.defaultConfig + "/default.zip")
-                downloadPack(overworldPackUrl, project)
-                downloadPack(reimagENDPackUrl, project)
-                downloadPack(tartarusPackUrl, project)
+                downloadPackSource("TerraOverworldConfig", Versions.Terra.overworldConfig, "Overworld.zip", project)
+                downloadPackSource("ReimagEND", Versions.Terra.reimagENDConfig, "ReimagEND.zip", project)
+                downloadPackSource("Tartarus", Versions.Terra.tartarusConfig, "Tartarus.zip", project)
                 downloadPack(defaultPackUrl, project, true)
             } catch (_: Exception) {
             }
