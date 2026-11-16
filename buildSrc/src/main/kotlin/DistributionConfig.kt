@@ -5,6 +5,9 @@ import java.io.FileWriter
 import java.net.URL
 import java.nio.file.FileSystems
 import java.nio.file.Path
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginExtension
@@ -187,6 +190,23 @@ fun downloadPack(packUrl: URL, project: Project, metapack: Boolean = false) {
     val file = File("${project.buildDir}/resources/main/${resourceType}/${fileName}")
     file.parentFile.mkdirs()
     file.outputStream().write(packUrl.readBytes())
+}
+
+fun downloadPackSource(repository: String, commit: String, fileName: String, project: Project) {
+    val archive = URL("https://codeload.github.com/PolyhedralDev/$repository/zip/$commit").readBytes()
+    val file = File("${project.buildDir}/resources/main/packs/$fileName")
+    file.parentFile.mkdirs()
+    ZipInputStream(archive.inputStream()).use { input ->
+        ZipOutputStream(file.outputStream()).use { output ->
+            generateSequence { input.nextEntry }.forEach { entry ->
+                val path = entry.name.substringAfter('/')
+                if (path.isEmpty() || path.split('/').any { it.startsWith('.') }) return@forEach
+                output.putNextEntry(ZipEntry(path))
+                if (!entry.isDirectory) input.copyTo(output)
+                output.closeEntry()
+            }
+        }
+    }
 }
 
 fun Project.getJarTask() = tasks.named("shadowJar").get() as ShadowJar
