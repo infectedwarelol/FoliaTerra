@@ -57,9 +57,6 @@ public class TerraBukkitPlugin extends JavaPlugin {
     private static final Logger logger = LoggerFactory.getLogger(TerraBukkitPlugin.class);
     private final Map<String, com.dfsek.terra.api.world.chunk.generation.ChunkGenerator> generatorMap = new HashMap<>();
     private PlatformImpl platform;
-    private AsyncScheduler asyncScheduler = this.getServer().getAsyncScheduler();
-
-    private GlobalRegionScheduler globalRegionScheduler = this.getServer().getGlobalRegionScheduler();
 
     @Override
     public void onEnable() {
@@ -167,7 +164,7 @@ public class TerraBukkitPlugin extends JavaPlugin {
                                  """.strip());
                 };
                 runnable.run();
-                asyncScheduler.runDelayed(this, task -> runnable.run(), 200L, TimeUnit.SECONDS);
+                getServer().getAsyncScheduler().runDelayed(this, task -> runnable.run(), 200L, TimeUnit.SECONDS);
                 // Bukkit.shutdown(); // we're not *that* evil
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
@@ -197,10 +194,10 @@ public class TerraBukkitPlugin extends JavaPlugin {
     }
 
     public AsyncScheduler getAsyncScheduler() {
-        return asyncScheduler;
+        return getServer().getAsyncScheduler();
     }
 
     public GlobalRegionScheduler getGlobalRegionScheduler() {
-        return globalRegionScheduler;
+        return getServer().getGlobalRegionScheduler();
     }
 }
