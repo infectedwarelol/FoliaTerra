@@ -24,12 +24,12 @@ trap 'rm -f "$build_log"' EXIT
 echo "==> Building"
 if [[ ! -x "$java_home/bin/java" ]]; then
     error "JDK 25 not found at $java_home (set JAVA_HOME_25)"
-elif ! JAVA_HOME="$java_home" ./gradlew build -x test --console=plain >"$build_log" 2>&1; then
+elif ! JAVA_HOME="$java_home" ./gradlew :platforms:bukkit:build -x test --console=plain >"$build_log" 2>&1; then
     error "gradle build failed: $(grep -m1 -E 'error:|What went wrong' -A1 "$build_log" | tail -n1 || echo 'see gradle output')"
 fi
 while IFS= read -r line; do
     warning "javac: $line"
-done < <(grep -E '\.java:[0-9]+: warning: ' "$build_log")
+done < <(grep -E "/$bukkit_sources/.*\.java:[0-9]+: warning: " "$build_log")
 
 echo "==> Checking jar"
 if ! compgen -G "$bukkit_sources/build/libs/*.jar" >/dev/null; then
