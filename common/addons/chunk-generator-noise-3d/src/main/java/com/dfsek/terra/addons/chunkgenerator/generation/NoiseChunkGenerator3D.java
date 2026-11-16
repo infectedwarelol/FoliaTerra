@@ -156,10 +156,28 @@ public class NoiseChunkGenerator3D implements ChunkGenerator {
         Palette palette = paletteAt(fdX, y, fdZ, sampler, paletteInfo, 0);
         double noise = sampler.sample(fdX, y, fdZ);
         if(noise > 0) {
+            LazilyEvaluatedInterpolator carver = new LazilyEvaluatedInterpolator(biomeProvider,
+                Math.floorDiv(x, 16),
+                Math.floorDiv(z, 16),
+                world.getMaxHeight(),
+                noisePropertiesKey, world.getMinHeight(),
+                carverHorizontalResolution,
+                carverVerticalResolution,
+                world.getSeed());
+            if(carver.sample(fdX, y, fdZ) > 0) {
+                return air;
+            }
             int level = 0;
             for(int yi = world.getMaxHeight() - 1; yi > y; yi--) {
-                if(sampler.sample(fdX, yi, fdZ) > 0) level++;
-                else level = 0;
+                if(sampler.sample(fdX, yi, fdZ) <= 0) {
+                    level = 0;
+                } else if(carver.sample(fdX, yi, fdZ) <= 0) {
+                    level++;
+                } else if(paletteInfo.updatePaletteWhenCarving()) {
+                    level = 0;
+                } else {
+                    level++;
+                }
             }
             return palette.get(level, x, y, z, world.getSeed());
         } else if(y <= paletteInfo.seaLevel()) {
