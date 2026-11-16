@@ -47,7 +47,7 @@ public class CachingBiomeProvider implements BiomeProvider, Handle {
                 .newBuilder()
                 .executor(CACHE_EXECUTOR)
                 .scheduler(Scheduler.systemScheduler())
-                .initialCapacity(981504)
+                .initialCapacity(4096)
                 .maximumSize(981504)
                 .build(this::sampleBiome);
             return Pair.of(new SeededVector3Key(0, 0, 0, 0), cache3D).mutable();
