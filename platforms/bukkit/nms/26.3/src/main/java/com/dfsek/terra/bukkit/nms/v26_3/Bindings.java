@@ -13,11 +13,11 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 
-import com.dfsek.terra.api.config.ConfigPack;
 import com.dfsek.terra.api.world.biome.generation.BiomeProvider;
 import com.dfsek.terra.api.world.chunk.generation.ChunkGenerator;
 import com.dfsek.terra.api.world.info.WorldProperties;
 import com.dfsek.terra.bukkit.config.PreLoadCompatibilityOptions;
+import com.dfsek.terra.bukkit.generator.BukkitChunkGeneratorWrapper;
 import com.dfsek.terra.bukkit.nms.NMSStructureBeardifier;
 import com.dfsek.terra.bukkit.nms.NMSVersionBindings;
 import com.dfsek.terra.bukkit.nms.config.VanillaBiomeProperties;
@@ -87,7 +87,8 @@ public final class Bindings implements NMSVersionBindings {
 
     @Override
     public net.minecraft.world.level.chunk.ChunkGenerator createChunkGenerator(net.minecraft.world.level.chunk.ChunkGenerator vanilla,
-                                                                               ConfigPack pack, BiomeSource biomeSource, long seed) {
-        return new NMSChunkGeneratorDelegate(vanilla, pack, biomeSource, seed, this);
+                                                                               BukkitChunkGeneratorWrapper wrapper, BiomeSource biomeSource,
+                                                                               long seed) {
+        return new NMSChunkGeneratorDelegate(vanilla, wrapper, biomeSource, seed, this);
     }
 }

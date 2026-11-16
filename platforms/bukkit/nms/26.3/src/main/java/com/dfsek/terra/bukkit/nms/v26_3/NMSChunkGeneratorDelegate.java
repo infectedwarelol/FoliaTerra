@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import com.dfsek.terra.api.config.ConfigPack;
 import com.dfsek.terra.api.world.biome.generation.BiomeProvider;
 import com.dfsek.terra.api.world.info.WorldProperties;
 import com.dfsek.terra.bukkit.config.PreLoadCompatibilityOptions;
+import com.dfsek.terra.bukkit.generator.BukkitChunkGeneratorWrapper;
 import com.dfsek.terra.bukkit.nms.NMSVersionBindings;
 import com.dfsek.terra.bukkit.nms.NMSWorldProperties;
 import com.dfsek.terra.bukkit.nms.Reflection;
@@ -37,18 +37,16 @@ import com.dfsek.terra.bukkit.world.BukkitWorldProperties;
 
 
 public class NMSChunkGeneratorDelegate extends ChunkGenerator {
-    private final com.dfsek.terra.api.world.chunk.generation.ChunkGenerator delegate;
+    private final BukkitChunkGeneratorWrapper wrapper;
     private final ChunkGenerator vanilla;
-    private final ConfigPack pack;
     private final NMSVersionBindings bindings;
     private final long seed;
 
-    public NMSChunkGeneratorDelegate(ChunkGenerator vanilla, ConfigPack pack, BiomeSource biomeProvider, long seed,
+    public NMSChunkGeneratorDelegate(ChunkGenerator vanilla, BukkitChunkGeneratorWrapper wrapper, BiomeSource biomeProvider, long seed,
                                      NMSVersionBindings bindings) {
         super(biomeProvider);
-        this.delegate = pack.getGeneratorProvider().newInstance(pack);
+        this.wrapper = wrapper;
         this.vanilla = vanilla;
-        this.pack = pack;
         this.seed = seed;
         this.bindings = bindings;
     }
@@ -81,12 +79,12 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
                                                        @NotNull Set<Holder<Biome>> biomes) {
         return vanilla.buildTerrain(chunk, blender, noiseConfig, structureAccessor, biomeManager, region, biomes)
             .thenApply(built -> {
-                PreLoadCompatibilityOptions compatibilityOptions = pack.getContext().get(PreLoadCompatibilityOptions.class);
+                PreLoadCompatibilityOptions compatibilityOptions = wrapper.getPack().getContext().get(PreLoadCompatibilityOptions.class);
                 if(compatibilityOptions.isBeard()) {
                     LevelAccessor level = Reflection.STRUCTURE_MANAGER.getLevel(structureAccessor);
-                    bindings.applyStructureBeard(delegate, structureAccessor, chunk,
+                    bindings.applyStructureBeard(wrapper.getHandle(), structureAccessor, chunk,
                         new BukkitWorldProperties(level.getMinecraftWorld().getWorld()),
-                        pack.getBiomeProvider(), compatibilityOptions);
+                        wrapper.getPack().getBiomeProvider(), compatibilityOptions);
                 }
                 return built;
             });
@@ -106,9 +104,9 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
     public int getBaseHeight(int x, int z, @NotNull Types heightmap, @NotNull LevelHeightAccessor world, @NotNull RandomState noiseConfig) {
         WorldProperties properties = new NMSWorldProperties(seed, world);
         int y = properties.getMaxHeight();
-        BiomeProvider biomeProvider = pack.getBiomeProvider();
+        BiomeProvider biomeProvider = wrapper.getPack().getBiomeProvider();
         while(y > getMinY() && !heightmap.isOpaque().test(
-            ((CraftBlockData) delegate.getBlock(properties, x, y - 1, z, biomeProvider).getHandle()).getState())) {
+            ((CraftBlockData) wrapper.getHandle().getBlock(properties, x, y - 1, z, biomeProvider).getHandle()).getState())) {
             y--;
         }
         return y;
@@ -118,9 +116,9 @@ public class NMSChunkGeneratorDelegate extends ChunkGenerator {
     public @NotNull NoiseColumn getBaseColumn(int x, int z, @NotNull LevelHeightAccessor world, @NotNull RandomState noiseConfig) {
         BlockState[] array = new BlockState[world.getHeight()];
         WorldProperties properties = new NMSWorldProperties(seed, world);
-        BiomeProvider biomeProvider = pack.getBiomeProvider();
+        BiomeProvider biomeProvider = wrapper.getPack().getBiomeProvider();
         for(int y = properties.getMaxHeight() - 1; y >= properties.getMinHeight(); y--) {
-            array[y - properties.getMinHeight()] = ((CraftBlockData) delegate.getBlock(properties, x, y, z, biomeProvider)
+            array[y - properties.getMinHeight()] = ((CraftBlockData) wrapper.getHandle().getBlock(properties, x, y, z, biomeProvider)
                 .getHandle()).getState();
         }
         return new NoiseColumn(getMinY(), array);

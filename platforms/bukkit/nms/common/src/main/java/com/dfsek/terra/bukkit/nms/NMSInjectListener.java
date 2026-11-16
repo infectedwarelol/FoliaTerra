@@ -48,7 +48,7 @@ public class NMSInjectListener implements Listener {
             WorldGenContext worldGenContext = Reflection.CHUNKMAP.getWorldGenContext(chunkMap);
             Reflection.CHUNKMAP.setWorldGenContext(chunkMap, new WorldGenContext(
                 worldGenContext.level(),
-                bindings.createChunkGenerator(vanilla, pack, bindings.createBiomeSource(pack.getBiomeProvider(), craftWorld.getSeed()),
+                bindings.createChunkGenerator(vanilla, bukkitChunkGeneratorWrapper, bindings.createBiomeSource(pack.getBiomeProvider(), craftWorld.getSeed()),
                     craftWorld.getSeed()),
                 worldGenContext.structureManager(),
                 worldGenContext.lightEngine(),
