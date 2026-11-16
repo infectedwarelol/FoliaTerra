@@ -4,7 +4,6 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.status.WorldGenContext;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +11,9 @@ import org.bukkit.event.world.WorldInitEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.dfsek.terra.api.config.ConfigPack;
 import com.dfsek.terra.bukkit.generator.BukkitChunkGeneratorWrapper;
@@ -22,8 +21,7 @@ import com.dfsek.terra.bukkit.generator.BukkitChunkGeneratorWrapper;
 
 public class NMSInjectListener implements Listener {
     private static final Logger LOGGER = LoggerFactory.getLogger(NMSInjectListener.class);
-    private static final Set<World> INJECTED = new HashSet<>();
-    private static final ReentrantLock INJECT_LOCK = new ReentrantLock();
+    private static final Set<UUID> INJECTED = ConcurrentHashMap.newKeySet();
     private final NMSVersionBindings bindings;
 
     public NMSInjectListener(NMSVersionBindings bindings) {
@@ -32,10 +30,13 @@ public class NMSInjectListener implements Listener {
 
     @EventHandler
     public void onWorldInit(WorldInitEvent event) {
-        if(!INJECTED.contains(event.getWorld()) &&
-           event.getWorld().getGenerator() instanceof BukkitChunkGeneratorWrapper bukkitChunkGeneratorWrapper) {
-            INJECT_LOCK.lock();
-            INJECTED.add(event.getWorld());
+        if(!(event.getWorld().getGenerator() instanceof BukkitChunkGeneratorWrapper bukkitChunkGeneratorWrapper)) {
+            return;
+        }
+        if(!INJECTED.add(event.getWorld().getUID())) {
+            return;
+        }
+        try {
             LOGGER.info("Preparing to take over the world: {}", event.getWorld().getName());
             CraftWorld craftWorld = (CraftWorld) event.getWorld();
             ServerLevel serverWorld = craftWorld.getHandle();
@@ -56,8 +57,9 @@ public class NMSInjectListener implements Listener {
             ));
 
             LOGGER.info("Successfully injected into world.");
-
-            INJECT_LOCK.unlock();
+        } catch(RuntimeException exception) {
+            INJECTED.remove(event.getWorld().getUID());
+            LOGGER.error("Failed to inject into world {}.", event.getWorld().getName(), exception);
         }
     }
 }
