@@ -100,6 +100,7 @@ public class BukkitChunkGeneratorWrapper extends org.bukkit.generator.ChunkGener
     public void setPack(ConfigPack pack) {
         this.pack = pack;
         setDelegate(pack.getGeneratorProvider().newInstance(pack));
+        blockPopulator.setPack(pack);
     }
 
     @Override
