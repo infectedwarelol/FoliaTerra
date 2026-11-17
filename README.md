@@ -1,6 +1,6 @@
 <img align="left" width="64" height="64" src="https://raw.githubusercontent.com/wiki/PolyhedralDev/Terra/images/terra_logo.png" alt="Terra Logo">
 
-# Terra
+# FoliaTerra
 
 Terra is a modern world generation modding platform, primarily for Minecraft.
 Terra allows complete customization of world generation with an advanced API,
